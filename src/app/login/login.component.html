@@ -1,0 +1,17 @@
+<h1>Login</h1>
+<form class="loginForm">
+  <mat-form-field class="form-group">
+    <label for="userName"></label>
+    <input matInput type="text" placeholder="Username" id="userName" [(ngModel)]="userName" name="userName" required>
+  </mat-form-field>
+  <mat-form-field class="form-group">
+    <label for="password"></label>
+    <input matInput type="password" id="password" [(ngModel)]="password" name="password" placeholder="Password" required>
+  </mat-form-field>
+  <button id="btn" mat-raised-button  type="submit" [disabled]="!userName || !password" class="btn" (click)="sendLoginRequest()">
+    Login
+  </button>
+  <div class="error" *ngIf="invalid">Invalid user/password</div>
+
+</form>
+

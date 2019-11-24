@@ -1,0 +1,35 @@
+<header class="header">
+  <div class="right row">
+    <div class="range-selector">
+
+    </div>
+    <div class="item-container row">
+      <button class="header-item" mat-raised-button type="submit">
+        <div class="row">
+          <mat-icon id="addEventIcon" svgIcon="add_alert"></mat-icon>
+          <div>Add booking</div>
+        </div>
+      </button>
+      <button class="header-item" mat-raised-button [matMenuTriggerFor]="userMenu">
+        <b>{{loginService.userName || 'Guest' }}</b>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item>Login</button>
+        <button mat-menu-item>Manage rooms</button>
+        <button mat-menu-item>Manage events</button>
+        <button mat-menu-item>Logout</button>
+      </mat-menu>
+    </div>
+  </div>
+</header>
+<div class="inline">
+  <div class="left-menu">
+    <div class="datepicker-container">
+      <mat-calendar></mat-calendar>
+    </div>
+  </div>
+  <div class="calendar-container">
+    <app-calendar></app-calendar>
+  </div>
+
+</div>

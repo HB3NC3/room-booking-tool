@@ -1,0 +1,36 @@
+<div id="calendarHeader">
+  <div class="row">
+    <div class="hours"></div>
+    <div class="dash-end"></div>
+    <div class="days-container">
+      <div class="day-column" *ngFor="let day of headers, let idx = index">
+        <div class="day-item">
+          <div>{{days[idx]}}</div>
+          <div>{{day}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+  <div class="row">
+    <div class="hours">
+      <div class="row-height" *ngFor="let hour of hours">
+        <span class="hour-container">{{hour.display}}</span>
+      </div>
+    </div>
+    <div class="row day-content">
+      <div>
+        <div class="row-height grid" *ngFor="let hour of hours"></div>
+      </div>
+      <div class="dash-end right-border"></div>
+      <div class="day-column right-border" *ngFor="let day of headers">
+        <div class="events">
+          <div class="event" [style.width]="100/3 + '%'" [style.left]="0 + '%'" [style.top]="40 + 'px'" [style.height]="3*40 + 'px'">Event 1</div>
+          <div class="event" [style.width]="100/3 + '%'" [style.left]="100/3 + '%'" [style.top]="2*40 + 'px'" [style.height]="1*40 + 'px'">Event 2</div>
+          <div class="event" [style.width]="100/3 + '%'" [style.left]="2 * 100/3 + '%'" [style.top]="2.5*40 + 'px'" [style.height]="1*40 + 'px'">Event 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
