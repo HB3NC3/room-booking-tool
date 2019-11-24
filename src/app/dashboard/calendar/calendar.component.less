@@ -1,3 +1,7 @@
+* {
+  user-select: none;
+}
+
 .days-container {
   display: flex;
   flex: none;
@@ -16,12 +20,6 @@
 
 .right-border {
   border-right: #dadce0 1px solid;
-}
-
-.events {
-  position: relative;
-  height: 100%;
-  width: 100%;
 }
 
 .day-item {
@@ -49,7 +47,7 @@
     content: '';
     border-bottom: #dadce0 1px solid;
     position: absolute;
-    width: 75.2%;
+    width: 70.50%;
     margin-top: -1px;
     z-index: 3;
     pointer-events: none;
@@ -71,11 +69,17 @@
 
 .event {
   position: absolute;
-  border: white 1px solid;
   border-radius: 4px;
   left: 0;
   width: 100%;
-  background-color: rgb(124, 179, 66);
+  background-color: #7092fb;
   color: white;
   z-index: 5;
+  box-shadow: 0 0 10px 1px rgba(112, 146, 251, 0.5);
+}
+
+.events {
+  position: relative;
+  height: 100%;
+  width: 95%;
 }

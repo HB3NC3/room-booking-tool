@@ -24,11 +24,19 @@
         <div class="row-height grid" *ngFor="let hour of hours"></div>
       </div>
       <div class="dash-end right-border"></div>
-      <div class="day-column right-border" *ngFor="let day of headers">
+      <div class="day-column right-border" *ngFor="let events of eventsByDay">
         <div class="events">
-          <div class="event" [style.width]="100/3 + '%'" [style.left]="0 + '%'" [style.top]="40 + 'px'" [style.height]="3*40 + 'px'">Event 1</div>
-          <div class="event" [style.width]="100/3 + '%'" [style.left]="100/3 + '%'" [style.top]="2*40 + 'px'" [style.height]="1*40 + 'px'">Event 2</div>
-          <div class="event" [style.width]="100/3 + '%'" [style.left]="2 * 100/3 + '%'" [style.top]="2.5*40 + 'px'" [style.height]="1*40 + 'px'">Event 3</div>
+          <div
+            *ngFor="let event of events"
+            class="event"
+            [style.width]="100 + '%'"
+            [style.left]="0 + '%'"
+            [style.top]="event.start * 40 + 'px'"
+            [style.height]="event.height * 40 + 'px'"
+          >
+            {{event.name}}
+            <div>{{event.range}}</div>
+          </div>
         </div>
       </div>
     </div>

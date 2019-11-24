@@ -1,5 +1,13 @@
 <header class="header">
   <div class="right row">
+    <div class="room-selector" *ngIf="roomService.allRooms$ | async as rooms">
+      <mat-form-field>
+        <mat-label>Select a room!</mat-label>
+        <mat-select [(value)]="currentSelectedRoom" (valueChange)="roomService.selectRoom($event)">
+          <mat-option *ngFor="let room of rooms" [value]="room">{{room.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="range-selector">
 
     </div>
@@ -25,11 +33,11 @@
 <div class="inline">
   <div class="left-menu">
     <div class="datepicker-container">
-      <mat-calendar></mat-calendar>
+      <mat-calendar [(selected)]="currentSelectedDate"></mat-calendar>
     </div>
   </div>
   <div class="calendar-container">
-    <app-calendar></app-calendar>
+    <app-calendar [currentDate]="currentSelectedDate"></app-calendar>
   </div>
 
 </div>
