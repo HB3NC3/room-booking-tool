@@ -1,7 +1,5 @@
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 50px;
   background: #fff;
@@ -82,25 +80,39 @@ mat-menu {
   margin: 20px;
 }
 
-.calendar-container {
-  margin-top: 80px;
-}
-
-.inline {
+.body {
   display: flex;
+  box-sizing: border-box;
   width: 100%;
+  height: calc(100% - 50px);
 }
 
 .left-menu {
-  width: 300px;
+  width: 250px;
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .calendar-container {
-  width: 75%;
+  flex: 1 1 auto;
+  overflow: hidden;
+  position: relative;
+  margin-top: 20px;
+  margin-right: 5%;
 }
 
 .datepicker-container {
-  margin-top: 80px;
-  position: fixed;
-  width: 300px;
+  margin-top: 60px;
+}
+
+app-calendar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  outline: none;
 }

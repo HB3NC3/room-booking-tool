@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { RoomEvent, RoomService } from "../room.service";
-import { BehaviorSubject, combineLatest, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 
 interface time {
@@ -67,8 +67,8 @@ export class CalendarComponent implements OnInit, OnChanges {
               this.eventsByDay[x].push({
                 start: 0,
                 height: 24,
-                name: event.name,
-                range: getRange(event)
+                name: x ? '' : event.name,
+                range: x ? '' : getRange(event)
               })
             })
           } else if (event.end.valueOf() > this.currentRange.start.valueOf() && event.end.valueOf() < this.currentRange.end.valueOf()) {
@@ -143,8 +143,6 @@ export class CalendarComponent implements OnInit, OnChanges {
           //tobb napon keresztul megy
         }
       });
-      console.log(this.eventsByDay);
-      console.log(currentRoom.events);
     })
   }
 

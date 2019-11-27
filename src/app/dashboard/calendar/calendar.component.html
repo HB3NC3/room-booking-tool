@@ -1,7 +1,5 @@
-<div id="calendarHeader">
-  <div class="row">
-    <div class="hours"></div>
-    <div class="dash-end"></div>
+<div class="container">
+  <div class="calendar-header">
     <div class="days-container">
       <div class="day-column" *ngFor="let day of headers, let idx = index">
         <div class="day-item">
@@ -11,31 +9,33 @@
       </div>
     </div>
   </div>
-</div>
-<div>
-  <div class="row">
-    <div class="hours">
-      <div class="row-height" *ngFor="let hour of hours">
-        <span class="hour-container">{{hour.display}}</span>
-      </div>
-    </div>
-    <div class="row day-content">
-      <div>
-        <div class="row-height grid" *ngFor="let hour of hours"></div>
-      </div>
-      <div class="dash-end right-border"></div>
-      <div class="day-column right-border" *ngFor="let events of eventsByDay">
-        <div class="events">
-          <div
-            *ngFor="let event of events"
-            class="event"
-            [style.width]="100 + '%'"
-            [style.left]="0 + '%'"
-            [style.top]="event.start * 40 + 'px'"
-            [style.height]="event.height * 40 + 'px'"
-          >
-            {{event.name}}
-            <div>{{event.range}}</div>
+  <div class="calendar-body">
+    <div class="inline-box">
+      <div class="calendar-container">
+        <div class="hours">
+          <div class="row-height" *ngFor="let hour of hours">
+            <span class="hour-container">{{hour.display}}</span>
+          </div>
+        </div>
+        <div class="day-content">
+          <div>
+            <div class="row-height grid" *ngFor="let hour of hours"></div>
+          </div>
+          <div class="dash-end right-border"></div>
+          <div class="day-column right-border" *ngFor="let events of eventsByDay">
+            <div class="events">
+              <div
+                *ngFor="let event of events"
+                class="event"
+                [style.width]="100 + '%'"
+                [style.left]="0 + '%'"
+                [style.top]="event.start * 40 + 'px'"
+                [style.height]="event.height * 40 + 'px'"
+              >
+                {{event.name}}
+                <div>{{event.range}}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
