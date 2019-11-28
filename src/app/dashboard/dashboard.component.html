@@ -1,6 +1,39 @@
 <header class="header">
-  <div class="right row">
-    <div class="room-selector" *ngIf="roomService.allRooms$ | async as rooms">
+  <div class="header-container">
+    <div class="row left">
+      <div class="title">Teremfoglaló alkalmazás</div>
+    </div>
+    <div class="full-width">
+      <div class="range-selector row">
+        <mat-icon svgIcon="arrow-left" (click)="previousRange()"></mat-icon>
+        <div>{{currentSelectedRange.start}} - {{currentSelectedRange.end}}</div>
+        <mat-icon svgIcon="arrow-right" (click)="nextRange()"></mat-icon>
+      </div>
+    </div>
+    <div class="row right">
+      <div class="item-container row">
+        <button class="header-item" mat-raised-button type="submit" *ngIf="loginService.isLoggedIn()">
+          <div class="row">
+            <mat-icon id="addEventIcon" svgIcon="add_alert"></mat-icon>
+            <div>Add booking</div>
+          </div>
+        </button>
+        <button class="header-item" mat-raised-button [matMenuTriggerFor]="userMenu">
+          <b>{{loginService.userName || 'Guest' }}</b>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="loginDialogOpen = true" *ngIf="!loginService.isLoggedIn()">Login</button>
+          <button mat-menu-item *ngIf="loginService.isLoggedIn()">Manage rooms</button>
+          <button mat-menu-item *ngIf="loginService.isLoggedIn()">Manage events</button>
+          <button mat-menu-item (click)="loginService.logout()" *ngIf="loginService.isLoggedIn()">Logout</button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="body">
+  <div class="left-menu">
+    <div class="room-selector" *ngIf="roomService.allEvent$ | async as rooms">
       <mat-form-field>
         <mat-label>Select a room!</mat-label>
         <mat-select [(value)]="currentSelectedRoom" (valueChange)="roomService.selectRoom($event)">
@@ -8,36 +41,15 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="range-selector">
-
-    </div>
-    <div class="item-container row">
-      <button class="header-item" mat-raised-button type="submit">
-        <div class="row">
-          <mat-icon id="addEventIcon" svgIcon="add_alert"></mat-icon>
-          <div>Add booking</div>
-        </div>
-      </button>
-      <button class="header-item" mat-raised-button [matMenuTriggerFor]="userMenu">
-        <b>{{loginService.userName || 'Guest' }}</b>
-      </button>
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item>Login</button>
-        <button mat-menu-item>Manage rooms</button>
-        <button mat-menu-item>Manage events</button>
-        <button mat-menu-item>Logout</button>
-      </mat-menu>
-    </div>
-  </div>
-</header>
-<div class="body">
-  <div class="left-menu">
     <div class="datepicker-container">
-      <mat-calendar [(selected)]="currentSelectedDate"></mat-calendar>
+      <mat-calendar #leftDatePicker [(selected)]="currentSelectedDate" (selectedChange)="selectDate($event)"></mat-calendar>
     </div>
   </div>
   <div class="calendar-container">
     <app-calendar [currentDate]="currentSelectedDate"></app-calendar>
   </div>
-
+</div>
+<div class="modal-dialog" *ngIf="loginDialogOpen">
+  <div class="close-button topright" (click)="closeLoginDialog()">&times;</div>
+  <app-login (onCloseDialog)="closeLoginDialog()"></app-login>
 </div>

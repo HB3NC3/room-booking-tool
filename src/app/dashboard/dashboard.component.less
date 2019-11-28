@@ -10,6 +10,20 @@
   transition: height .2s;
 }
 
+.header-container {
+  display: flex;
+  width: 100%;
+}
+
+.title {
+  padding-top: 10px;
+  padding-right: 25px;
+  height: 35px;
+  font-size: 23px;
+  font-weight: lighter;
+  padding-left: 30px;
+}
+
 .item-container {
   padding-top: 7px;
   padding-right: 25px;
@@ -104,10 +118,6 @@ mat-menu {
   margin-right: 5%;
 }
 
-.datepicker-container {
-  margin-top: 60px;
-}
-
 app-calendar {
   position: absolute;
   top: 0;
@@ -115,4 +125,54 @@ app-calendar {
   left: 0;
   right: 0;
   outline: none;
+}
+
+.room-selector {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  width: 80%;
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.modal-dialog {
+  position: absolute;
+  bottom: auto;
+  right: auto;
+  left: 50%;
+  top: 50%;
+  z-index: 9;
+  width: 500px;
+  height: 400px;
+  margin-left: -250px;
+  margin-top: -200px;
+  background: #4c63e3db;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px 5px rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+@keyframes animatetop {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+.range-selector {
+  padding-top: 10px;
+  height: 35px;
+  font-size: 23px;
+  font-weight: lighter;
+  margin: auto;
+  max-width: max-content;
+  mat-icon {
+    margin-top: 1px;
+    cursor: pointer;
+    &:hover {
+      background-color: #80808033;
+      border-radius: 50px;
+    }
+  }
 }

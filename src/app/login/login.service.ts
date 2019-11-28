@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
-import {catchError, map, startWith} from 'rxjs/operators';
+import { catchError, map, startWith, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-interface LoginResponse {
-  token: string;
-  expiration: string;
-  isAdmin: boolean;
+export enum Role {
+  GUEST,
+  USER,
+  ADMIN
 }
 
 const USER = 'user';
 const TOKEN = 'token';
-const IS_ADMIN = 'is_admin';
-const LOGIN_PATH = '/api/login';
+const ROLE = 'role';
+const LOGIN_PATH = '/teremfoglalo/system-user/login';
 
 @Injectable({
   providedIn: 'root'
@@ -28,14 +28,17 @@ export class LoginService {
   login(userName: string, password: string): Observable<boolean> {
     return this.sendLoginRequest(userName, password).pipe(
       map(x => x.body),
-      catchError(() => {
-        return of({} as LoginResponse);
+      catchError((e: HttpErrorResponse) => {
+        if (e.status === 200) {
+          return of(e.error.text);
+        }
+        return of(null);
       }),
       map(response => {
-        if (!response.token) {
+        if (!response) {
           return false;
         }
-        saveCredentials(userName, response.token, response.isAdmin);
+        saveCredentials(userName, response as string, Role.USER);
         return true;
       }),
       startWith(null)
@@ -49,7 +52,6 @@ export class LoginService {
   logout() {
     localStorage.removeItem(TOKEN);
     localStorage.removeItem(USER);
-    this.router.navigateByUrl('/login');
   }
 
   get userName(): string {
@@ -57,20 +59,21 @@ export class LoginService {
   }
 
   get isAdmin(): boolean {
-    return localStorage.getItem(IS_ADMIN) === 'true';
+    const item = localStorage.getItem(ROLE);
+    return item && parseInt(item) === Role.ADMIN;
   }
 
   get token(): string {
     return localStorage.getItem(TOKEN);
   }
 
-  private sendLoginRequest(userName: string, password: string): Observable<HttpResponse<LoginResponse>> {
-    return this.http.post<LoginResponse>(LOGIN_PATH, {username: userName, password}, {observe: 'response'});
+  private sendLoginRequest(username: string, password: string): Observable<HttpResponse<string>> {
+    return this.http.post<string>(LOGIN_PATH, {username: username, password}, {observe: 'response'});
   }
 }
 
-function saveCredentials(userName: string, token: string, isAdmin: boolean) {
+function saveCredentials(userName: string, token: string, role: Role) {
   localStorage.setItem(TOKEN, token);
   localStorage.setItem(USER, userName);
-  localStorage.setItem(IS_ADMIN, isAdmin.toString());
+  localStorage.setItem(ROLE, role.toString());
 }

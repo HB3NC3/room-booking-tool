@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {LoginService} from './login.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -8,15 +7,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.less']
 })
 export class LoginComponent implements OnInit {
+  @Output() onCloseDialog = new EventEmitter();
   userName: string;
   password: string;
   invalid = false;
   loading = false;
 
-  constructor(
-    private loginService: LoginService,
-    private router: Router) {
-  }
+  constructor(private loginService: LoginService) {}
 
   ngOnInit() {
   }
@@ -24,7 +21,7 @@ export class LoginComponent implements OnInit {
   sendLoginRequest() {
     this.loginService.login(this.userName, this.password).subscribe(success => {
       if (success) {
-        this.router.navigateByUrl('/');
+        this.onCloseDialog.emit();
         this.loading = false;
         return;
       } else if (success === null) {

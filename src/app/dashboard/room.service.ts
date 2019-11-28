@@ -1,18 +1,29 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, ReplaySubject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { Observable, ReplaySubject } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
-export interface RoomEvent {
-  start: Date;
-  end: Date;
-  name: string;
+const ROOMS_PATH = '/teremfoglalo/room';
+const EVENTS_PATH = '/teremfoglalo/event/all';
+export const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+export interface Event {
+  creator: {
+    role: string;
+    username: string;
+  };
+  startDate: string;
+  start?: Date;
+  end?: Date;
+  endDate: string;
+  isPrivate: true;
+  roomList: Room[];
 }
 
 export interface Room {
-  id: number;
+  id: string;
   name: string;
-  place: string;
-  events: RoomEvent[];
+  location: string;
 }
 
 @Injectable({
@@ -20,9 +31,9 @@ export interface Room {
 })
 export class RoomService {
   private _currentSelectedRoom$ = new ReplaySubject<Room>(1);
-  private _allRooms$ = new ReplaySubject<Room[]>(1);
+  private _allEvents$ = new ReplaySubject<Event[]>(1);
   public currentSelectedRoom$ = this._currentSelectedRoom$.asObservable();
-  public allRooms$ = this._allRooms$.asObservable();
+  public allEvent$ = this._allEvents$.asObservable();
 
   constructor(private http: HttpClient) {
     this.refreshAllRooms();
@@ -32,65 +43,22 @@ export class RoomService {
     this._currentSelectedRoom$.next(room);
   }
 
-  public refreshAllRooms() {
-    this._allRooms$.next([
-      {
-        id: 0,
-        name: 'room1',
-        place: 'asd utca 32',
-        events: [
-          {
-            name: 'random event 1',
-            start: new Date(2019,10,24,12,0),
-            end: new Date(2019,10,24,15,30),
-          },
-          {
-            name: 'random event 2',
-            start: new Date(2019,10,18,12,0),
-            end: new Date(2019,10,20,11,0),
-          },
-          {
-            name: 'random event 2',
-            start: new Date(2019,10,20,13,0),
-            end: new Date(2019,10,23,18,0),
-          }
+  private getRooms(): Observable<HttpResponse<Room[]>> {
+    return this.http.get<Room[]>(ROOMS_PATH, {observe: 'response'});
+  }
 
-        ]
-      },
-      {
-        id: 1,
-        name: 'room2',
-        place: 'asdf utca 21',
-        events: [
-          {
-            name: 'random event 1131',
-            start: new Date(2019,10,21,12,0),
-            end: new Date(2019,10,26,15,30),
-          },
-          {
-            name: 'random event 2',
-            start: new Date(2019,10,17,12,0),
-            end: new Date(2019,10,19,11,0),
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: 'room3',
-        place: 'asdf utca 21',
-        events: [
-          {
-            name: 'random event 1131',
-            start: new Date(2019,9,25,12,0),
-            end: new Date(2019,11,25,15,30),
-          },
-          {
-            name: 'random event 2',
-            start: new Date(2019,10,21,12,0),
-            end: new Date(2019,10,22,11,0),
-          }
-        ]
-      }
-    ]);
+  private getEvents(): Observable<HttpResponse<Event[]>> {
+    return this.http.get<Event[]>(EVENTS_PATH, {observe: 'response'});
+  }
+
+  public refreshAllRooms() {
+    this.getEvents().pipe(map(x => x.body)).subscribe(events => {
+      this._allEvents$.next(events.map(event => {
+        event.start = new Date(Date.parse(event.startDate));
+        event.end = new Date(Date.parse(event.endDate));
+        return event;
+      }))
+    });
+
   }
 }

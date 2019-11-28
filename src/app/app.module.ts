@@ -24,11 +24,7 @@ const appRoutes: Routes = [
   {
     path: '',
     component: DashboardComponent,
-  },
-  {
-    path: 'login',
-    component: LoginComponent
-  },
+  }
 ];
 
 @NgModule({

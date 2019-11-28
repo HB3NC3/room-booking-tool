@@ -36,7 +36,7 @@ export class CalendarComponent implements OnInit, OnChanges {
     "Vasárnap"
   ];
   hours: time[];
-  currentRange: {start: Date, end: Date} = this.createRange(this.currentDate);
+  currentRange: {start: Date, end: Date} = createRange(this.currentDate);
 
   constructor(public roomService: RoomService) {
     this.headers = this.getHeaderNumbers(this.currentRange.start);
@@ -56,7 +56,7 @@ export class CalendarComponent implements OnInit, OnChanges {
       this._currentSelectedDate$.asObservable()
     ).subscribe(([currentRoom, currentDate]) => {
       this.eventsByDay = [[],[],[],[],[],[],[]];
-      this.currentRange = this.createRange(currentDate);
+      this.currentRange = createRange(currentDate);
       this.headers = this.getHeaderNumbers(this.currentRange.start);
       currentRoom.events.forEach(event => {
         const eventStartDay = (event.start.getDay() + 6) % 7;
@@ -150,16 +150,6 @@ export class CalendarComponent implements OnInit, OnChanges {
     this._currentSelectedDate$.next(this.currentDate);
   }
 
-  createRange(date: Date): {start: Date, end: Date} {
-    const dayOfTheWeek = (date.getDay() + 6) % 7;
-    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()).valueOf() - dayOfTheWeek * 24 * 60 * 60 * 1000;
-    const end = start + 7 * 24 * 60 * 60 * 1000 - 1 ;
-    return {
-      start: new Date(start),
-      end: new Date(end)
-    }
-  }
-
   getHeaderNumbers(date: Date): number[] {
     const value = date.valueOf();
     const values: number[] = [];
@@ -180,4 +170,14 @@ function getRange(event: RoomEvent) {
 
 function getNumberFormDate(date: Date): number {
   return date.getHours() + date.getMinutes() / 60
+}
+
+export function createRange(date: Date): {start: Date, end: Date} {
+  const dayOfTheWeek = (date.getDay() + 6) % 7;
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()).valueOf() - dayOfTheWeek * 24 * 60 * 60 * 1000;
+  const end = start + 7 * 24 * 60 * 60 * 1000 - 1 ;
+  return {
+    start: new Date(start),
+    end: new Date(end)
+  }
 }
