@@ -5,8 +5,7 @@ import { catchError, map, startWith, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
 export enum Role {
-  GUEST,
-  USER,
+  REGISTERED,
   ADMIN
 }
 
@@ -38,7 +37,7 @@ export class LoginService {
         if (!response) {
           return false;
         }
-        saveCredentials(userName, response as string, Role.USER);
+        saveCredentials(userName, response.token, response.role);
         return true;
       }),
       startWith(null)
@@ -52,13 +51,18 @@ export class LoginService {
   logout() {
     localStorage.removeItem(TOKEN);
     localStorage.removeItem(USER);
+    localStorage.removeItem(ROLE);
   }
 
   get userName(): string {
     return localStorage.getItem(USER);
   }
 
-  get isAdmin(): boolean {
+  isGuest(): boolean {
+    return !this.isLoggedIn();
+  }
+
+  isAdmin(): boolean {
     const item = localStorage.getItem(ROLE);
     return item && parseInt(item) === Role.ADMIN;
   }
@@ -75,5 +79,5 @@ export class LoginService {
 function saveCredentials(userName: string, token: string, role: Role) {
   localStorage.setItem(TOKEN, token);
   localStorage.setItem(USER, userName);
-  localStorage.setItem(ROLE, role.toString());
+  localStorage.setItem(ROLE, Role[role]);
 }

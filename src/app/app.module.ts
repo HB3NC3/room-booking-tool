@@ -22,6 +22,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { ManageRoomsComponent } from './manage-rooms/manage-rooms.component';
 import { EditableRoomFieldComponent } from './editable-room-field/editable-room-field.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AddBookingComponent } from './add-booking/add-booking.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DeletableListItemComponent } from './deletable-list-item/deletable-list-item.component';
 
 const appRoutes: Routes = [
   {
@@ -37,7 +41,9 @@ const appRoutes: Routes = [
     DashboardComponent,
     CalendarComponent,
     ManageRoomsComponent,
-    EditableRoomFieldComponent
+    EditableRoomFieldComponent,
+    AddBookingComponent,
+    DeletableListItemComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,7 +59,9 @@ const appRoutes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSlideToggleModule,
+    MatCheckboxModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},

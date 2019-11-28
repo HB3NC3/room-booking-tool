@@ -4,15 +4,15 @@
       <div class="title">Teremfoglaló alkalmazás</div>
     </div>
     <div class="full-width">
-      <div class="range-selector row">
-        <mat-icon svgIcon="arrow-left" (click)="previousRange()"></mat-icon>
+      <div class="range-selector row" *ngIf="currentSelectedRange">
+        <mat-icon svgIcon="arrow-left" (click)="eventService.previousRange()"></mat-icon>
         <div>{{currentSelectedRange.start}} - {{currentSelectedRange.end}}</div>
-        <mat-icon svgIcon="arrow-right" (click)="nextRange()"></mat-icon>
+        <mat-icon svgIcon="arrow-right" (click)="eventService.nextRange()"></mat-icon>
       </div>
     </div>
     <div class="row right">
       <div class="item-container row">
-        <button class="header-item" mat-raised-button type="submit" *ngIf="loginService.isLoggedIn()">
+        <button class="header-item" mat-raised-button type="submit" *ngIf="loginService.isLoggedIn()" (click)="openAddBookingDialog()">
           <div class="row">
             <mat-icon id="addEventIcon" svgIcon="add_alert"></mat-icon>
             <div>Add booking</div>
@@ -23,7 +23,9 @@
         </button>
         <mat-menu #userMenu="matMenu">
           <button mat-menu-item (click)="openLoginDialog()" *ngIf="!loginService.isLoggedIn()">Login</button>
-          <button mat-menu-item (click)="openManageRoomsDialog()" *ngIf="loginService.isLoggedIn()">Manage rooms</button>
+          <button mat-menu-item (click)="openRegisterDialog()" *ngIf="!loginService.isLoggedIn()">Register</button>
+          <button mat-menu-item (click)="openManageRoomsDialog()" *ngIf="loginService.isAdmin()">Manage rooms</button>
+          <button mat-menu-item (click)="openManageUsersDialog()" *ngIf="loginService.isAdmin()">Manage users</button>
           <button mat-menu-item (click)="loginService.logout()" *ngIf="loginService.isLoggedIn()">Logout</button>
         </mat-menu>
       </div>
@@ -35,7 +37,7 @@
     <div class="room-selector" *ngIf="roomService.rooms$ | async as rooms">
       <mat-form-field>
         <mat-label>Select a room!</mat-label>
-        <mat-select [(value)]="currentSelectedRoom" (valueChange)="roomService.selectRoom($event)">
+        <mat-select (valueChange)="roomService.selectRoom($event)">
           <mat-option *ngFor="let room of rooms" [value]="room">{{room.name}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -45,7 +47,7 @@
     </div>
   </div>
   <div class="calendar-container">
-    <app-calendar [currentDate]="currentSelectedDate"></app-calendar>
+    <app-calendar></app-calendar>
   </div>
 </div>
 <div class="modal-dialog" *ngIf="loginDialogOpen">
@@ -55,5 +57,10 @@
 
 <div class="modal-dialog manage-rooms" *ngIf="manageRoomsDialogOpen">
   <div class="close-button topright" (click)="closeManageRoomsDialog()">&times;</div>
-  <app-manage-rooms (onCloseDialog)="closeManageRoomsDialog()"></app-manage-rooms>
+  <app-manage-rooms></app-manage-rooms>
+</div>
+
+<div class="modal-dialog add-booking" *ngIf="addBookingDialogOpen">
+  <div class="close-button topright" (click)="closeAddBookingDialog()">&times;</div>
+  <app-add-booking (onCloseDialog)="closeAddBookingDialog()"></app-add-booking>
 </div>

@@ -20,7 +20,7 @@ export class EditableRoomFieldComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (this.room) {
       this.location = this.room.location;
-      this.name = this.room.location;
+      this.name = this.room.name;
     }
   }
 
@@ -63,7 +63,7 @@ export class EditableRoomFieldComponent implements OnChanges {
 
   onDelete() {
     this.isLoading = true;
-    this.roomService.delete(this.room.id).subscribe(() => {
+    this.roomService.deleteRoom(this.room.id).subscribe(() => {
       this.onSaved.emit();
       },
       () => {

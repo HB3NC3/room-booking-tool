@@ -1,5 +1,5 @@
 <div class="dialog-container">
-  <div class="title">Manage rooms</div>
+  <div class="dialog-title">Manage rooms</div>
 
   <div class="container" *ngIf="roomService.rooms$ | async as rooms; else loading">
     <app-editable-room-field

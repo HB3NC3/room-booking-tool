@@ -1,7 +1,6 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import { RoomEvent, RoomService } from "../room.service";
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { Component } from "@angular/core";
+import { combineLatest } from 'rxjs';
+import { EventService, RoomEvent } from '../event.service';
 
 interface time {
   display: string;
@@ -21,10 +20,9 @@ interface EventEntry {
   templateUrl: "./calendar.component.html",
   styleUrls: ["./calendar.component.less"]
 })
-export class CalendarComponent implements OnInit, OnChanges {
-  @Input() currentDate: Date = new Date();
-  private _currentSelectedDate$ = new BehaviorSubject<Date>(new Date);
+export class CalendarComponent {
   headers: number[] = [];
+  hours: time[];
   eventsByDay: EventEntry[][] = [[],[],[],[],[],[],[]];
   days: string[] = [
     "Hétfő",
@@ -35,11 +33,10 @@ export class CalendarComponent implements OnInit, OnChanges {
     "Szombat",
     "Vasárnap"
   ];
-  hours: time[];
-  currentRange: {start: Date, end: Date} = createRange(this.currentDate);
 
-  constructor(public roomService: RoomService) {
-    this.headers = this.getHeaderNumbers(this.currentRange.start);
+  constructor(
+    public eventService: EventService
+  ) {
     this.hours = Array(24)
       .fill(1)
       .map((val, idx) => {
@@ -51,18 +48,19 @@ export class CalendarComponent implements OnInit, OnChanges {
           minutes: 0
         };
       });
+    this.eventService.currentRange$.subscribe(range => {
+      this.headers = getHeaderNumbers(range.start);
+    });
     combineLatest(
-      this.roomService.currentSelectedRoom$.pipe(startWith({events: []})),
-      this._currentSelectedDate$.asObservable()
-    ).subscribe(([currentRoom, currentDate]) => {
+      this.eventService.currentRange$,
+      this.eventService.events$
+    ).subscribe(([currentRange, allEvents]) => {
       this.eventsByDay = [[],[],[],[],[],[],[]];
-      this.currentRange = createRange(currentDate);
-      this.headers = this.getHeaderNumbers(this.currentRange.start);
-      currentRoom.events.forEach(event => {
+      allEvents.forEach(event => {
         const eventStartDay = (event.start.getDay() + 6) % 7;
         const eventEndDay = (event.end.getDay() + 6) % 7;
-        if (event.start.valueOf() < this.currentRange.start.valueOf()) {
-          if (event.end.valueOf() > this.currentRange.end.valueOf()) {
+        if (event.start.valueOf() < currentRange.start.valueOf()) {
+          if (event.end.valueOf() > currentRange.end.valueOf()) {
             [...Array(7).keys()].forEach(x => {
               this.eventsByDay[x].push({
                 start: 0,
@@ -71,7 +69,7 @@ export class CalendarComponent implements OnInit, OnChanges {
                 range: x ? '' : getRange(event)
               })
             })
-          } else if (event.end.valueOf() > this.currentRange.start.valueOf() && event.end.valueOf() < this.currentRange.end.valueOf()) {
+          } else if (event.end.valueOf() > currentRange.start.valueOf() && event.end.valueOf() < currentRange.end.valueOf()) {
             // range elejetol az event vegeig szinezni
             [...Array(eventEndDay).keys()].forEach(x => {
               this.eventsByDay[x].push({
@@ -89,8 +87,8 @@ export class CalendarComponent implements OnInit, OnChanges {
             });
 
           }
-        } else if ( event.end.valueOf() > this.currentRange.end.valueOf()) {
-          if (event.start.valueOf() < this.currentRange.end.valueOf()) {
+        } else if ( event.end.valueOf() > currentRange.end.valueOf()) {
+          if (event.start.valueOf() < currentRange.end.valueOf()) {
             this.eventsByDay[eventStartDay].push({
               start: getNumberFormDate(event.start),
               height: 24 - getNumberFormDate(event.start),
@@ -145,21 +143,15 @@ export class CalendarComponent implements OnInit, OnChanges {
       });
     })
   }
+}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this._currentSelectedDate$.next(this.currentDate);
-  }
-
-  getHeaderNumbers(date: Date): number[] {
-    const value = date.valueOf();
-    const values: number[] = [];
-    [...Array(7).keys()].forEach( v => {
-      values.push(new Date(value + v * 24 * 60 * 60 * 1000).getDate());
-    });
-    return values;
-  }
-
-  ngOnInit() {}
+function getHeaderNumbers(date: Date): number[] {
+  const value = date.valueOf();
+  const values: number[] = [];
+  [...Array(7).keys()].forEach( v => {
+    values.push(new Date(value + v * 24 * 60 * 60 * 1000).getDate());
+  });
+  return values;
 }
 
 function getRange(event: RoomEvent) {
@@ -170,14 +162,4 @@ function getRange(event: RoomEvent) {
 
 function getNumberFormDate(date: Date): number {
   return date.getHours() + date.getMinutes() / 60
-}
-
-export function createRange(date: Date): {start: Date, end: Date} {
-  const dayOfTheWeek = (date.getDay() + 6) % 7;
-  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate()).valueOf() - dayOfTheWeek * 24 * 60 * 60 * 1000;
-  const end = start + 7 * 24 * 60 * 60 * 1000 - 1 ;
-  return {
-    start: new Date(start),
-    end: new Date(end)
-  }
 }

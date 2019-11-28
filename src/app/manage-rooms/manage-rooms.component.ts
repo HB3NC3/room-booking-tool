@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RoomService } from '../dashboard/room.service';
 
 @Component({
@@ -7,7 +7,6 @@ import { RoomService } from '../dashboard/room.service';
   styleUrls: ['./manage-rooms.component.less']
 })
 export class ManageRoomsComponent implements OnInit {
-  @Output() onCloseDialog = new EventEmitter();
   constructor(private roomService: RoomService) { }
 
   ngOnInit() {

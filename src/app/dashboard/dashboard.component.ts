@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, Injectable, ViewChild } from '@angular/core';
 import { LoginService } from '../login/login.service';
-import { ONE_DAY_MS, Room, RoomService } from './room.service';
+import { Room, RoomService } from './room.service';
 import { NativeDateAdapter } from '@angular/material/core';
-import { createRange } from './calendar/calendar.component';
 import { MatCalendar } from '@angular/material/datepicker';
+import { EventService } from './event.service';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -24,13 +24,24 @@ export class DashboardComponent implements AfterViewInit {
   currentSelectedDate: Date;
   currentSelectedRange: {start: string, end: string};
   loginDialogOpen = false;
-  manageRoomsDialogOpen = true;
+  manageRoomsDialogOpen = false;
+  addBookingDialogOpen = true;
 
   constructor(
     public loginService: LoginService,
-    public roomService: RoomService
+    public roomService: RoomService,
+    public eventService: EventService
   ) {
-    this.selectDate(new Date());
+    this.eventService.currentRange$.subscribe(range => {
+      this.currentSelectedRange = {
+        start: range.start.toLocaleString('hu-HU', {year: 'numeric', month: 'short', day: 'numeric'}),
+        end: range.end.toLocaleString('hu-HU', {year: 'numeric', month: 'short', day: 'numeric'}),
+      };
+    });
+    this.eventService.currentSelectedDate$.subscribe(date => {
+      this.calendar && this.calendar._goToDateInView(date, 'month');
+      this.currentSelectedDate = date;
+    })
   }
 
   ngAfterViewInit() {
@@ -38,23 +49,29 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   selectDate(date: Date) {
-    this.currentSelectedDate = date;
-    const range = createRange(date);
-    this.currentSelectedRange = {
-      start: range.start.toLocaleString('hu-HU', {year: 'numeric', month: 'short', day: 'numeric'}),
-      end: range.end.toLocaleString('hu-HU', {year: 'numeric', month: 'short', day: 'numeric'}),
-    };
-    this.calendar && this.calendar._goToDateInView(date, 'month');
+    this.eventService.selectDate(date);
   }
 
   openLoginDialog() {
     this.loginDialogOpen = true;
     this.closeManageRoomsDialog();
+    this.closeAddBookingDialog();
   }
 
   openManageRoomsDialog() {
     this.manageRoomsDialogOpen = true;
     this.closeLoginDialog();
+    this.closeAddBookingDialog();
+  }
+
+  openAddBookingDialog() {
+    this.addBookingDialogOpen = true;
+    this.closeLoginDialog();
+    this.closeManageRoomsDialog()
+  }
+
+  closeAddBookingDialog() {
+    this.addBookingDialogOpen = false;
   }
 
   closeLoginDialog() {
@@ -65,13 +82,11 @@ export class DashboardComponent implements AfterViewInit {
     this.manageRoomsDialogOpen = false;
   }
 
-  previousRange() {
-    const date = new Date(this.currentSelectedDate.valueOf() - 7 * ONE_DAY_MS);
-    this.selectDate(date);
+  openManageUsersDialog() {
+
   }
 
-  nextRange() {
-    const date = new Date(this.currentSelectedDate.valueOf() + 7 * ONE_DAY_MS);
-    this.selectDate(date);
+  openRegisterDialog() {
+
   }
 }
