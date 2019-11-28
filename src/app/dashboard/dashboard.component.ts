@@ -1,7 +1,5 @@
 import { AfterViewInit, Component, Injectable, ViewChild } from '@angular/core';
 import { LoginService } from '../login/login.service';
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ONE_DAY_MS, Room, RoomService } from './room.service';
 import { NativeDateAdapter } from '@angular/material/core';
 import { createRange } from './calendar/calendar.component';
@@ -26,23 +24,13 @@ export class DashboardComponent implements AfterViewInit {
   currentSelectedDate: Date;
   currentSelectedRange: {start: string, end: string};
   loginDialogOpen = false;
+  manageRoomsDialogOpen = true;
 
   constructor(
     public loginService: LoginService,
-    public roomService: RoomService,
-    iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer
+    public roomService: RoomService
   ) {
     this.selectDate(new Date());
-    iconRegistry.addSvgIcon(
-      'add_alert',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/img/add_alert-24px.svg'));
-    iconRegistry.addSvgIcon(
-      'arrow-left',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/img/keyboard_arrow_left-24px.svg'));
-    iconRegistry.addSvgIcon(
-      'arrow-right',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/img/keyboard_arrow_right-24px.svg'));
   }
 
   ngAfterViewInit() {
@@ -59,8 +47,22 @@ export class DashboardComponent implements AfterViewInit {
     this.calendar && this.calendar._goToDateInView(date, 'month');
   }
 
+  openLoginDialog() {
+    this.loginDialogOpen = true;
+    this.closeManageRoomsDialog();
+  }
+
+  openManageRoomsDialog() {
+    this.manageRoomsDialogOpen = true;
+    this.closeLoginDialog();
+  }
+
   closeLoginDialog() {
     this.loginDialogOpen = false;
+  }
+
+  closeManageRoomsDialog() {
+    this.manageRoomsDialogOpen = false;
   }
 
   previousRange() {

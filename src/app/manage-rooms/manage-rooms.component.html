@@ -1,0 +1,19 @@
+<div class="dialog-container">
+  <div class="title">Manage rooms</div>
+
+  <div class="container" *ngIf="roomService.rooms$ | async as rooms; else loading">
+    <app-editable-room-field
+      *ngFor="let room of rooms"
+      (onSaved)="refreshRooms()"
+      [room]="room"
+    ></app-editable-room-field>
+    <app-editable-room-field
+      [isNew]="true"
+      (onSaved)="refreshRooms()"
+    ></app-editable-room-field>
+  </div>
+
+  <ng-template #loading>
+    loading
+  </ng-template>
+</div>

@@ -22,9 +22,8 @@
           <b>{{loginService.userName || 'Guest' }}</b>
         </button>
         <mat-menu #userMenu="matMenu">
-          <button mat-menu-item (click)="loginDialogOpen = true" *ngIf="!loginService.isLoggedIn()">Login</button>
-          <button mat-menu-item *ngIf="loginService.isLoggedIn()">Manage rooms</button>
-          <button mat-menu-item *ngIf="loginService.isLoggedIn()">Manage events</button>
+          <button mat-menu-item (click)="openLoginDialog()" *ngIf="!loginService.isLoggedIn()">Login</button>
+          <button mat-menu-item (click)="openManageRoomsDialog()" *ngIf="loginService.isLoggedIn()">Manage rooms</button>
           <button mat-menu-item (click)="loginService.logout()" *ngIf="loginService.isLoggedIn()">Logout</button>
         </mat-menu>
       </div>
@@ -33,7 +32,7 @@
 </header>
 <div class="body">
   <div class="left-menu">
-    <div class="room-selector" *ngIf="roomService.allEvent$ | async as rooms">
+    <div class="room-selector" *ngIf="roomService.rooms$ | async as rooms">
       <mat-form-field>
         <mat-label>Select a room!</mat-label>
         <mat-select [(value)]="currentSelectedRoom" (valueChange)="roomService.selectRoom($event)">
@@ -52,4 +51,9 @@
 <div class="modal-dialog" *ngIf="loginDialogOpen">
   <div class="close-button topright" (click)="closeLoginDialog()">&times;</div>
   <app-login (onCloseDialog)="closeLoginDialog()"></app-login>
+</div>
+
+<div class="modal-dialog manage-rooms" *ngIf="manageRoomsDialogOpen">
+  <div class="close-button topright" (click)="closeManageRoomsDialog()">&times;</div>
+  <app-manage-rooms (onCloseDialog)="closeManageRoomsDialog()"></app-manage-rooms>
 </div>

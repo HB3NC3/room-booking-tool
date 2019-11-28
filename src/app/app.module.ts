@@ -19,6 +19,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CalendarComponent } from './dashboard/calendar/calendar.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { ManageRoomsComponent } from './manage-rooms/manage-rooms.component';
+import { EditableRoomFieldComponent } from './editable-room-field/editable-room-field.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const appRoutes: Routes = [
   {
@@ -32,7 +35,9 @@ const appRoutes: Routes = [
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    CalendarComponent
+    CalendarComponent,
+    ManageRoomsComponent,
+    EditableRoomFieldComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +52,8 @@ const appRoutes: Routes = [
     MatMenuModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},

@@ -32,8 +32,10 @@ export interface Room {
 export class RoomService {
   private _currentSelectedRoom$ = new ReplaySubject<Room>(1);
   private _allEvents$ = new ReplaySubject<Event[]>(1);
+  private _rooms$ = new ReplaySubject<Room[]>(1);
   public currentSelectedRoom$ = this._currentSelectedRoom$.asObservable();
   public allEvent$ = this._allEvents$.asObservable();
+  public rooms$ = this._rooms$.asObservable();
 
   constructor(private http: HttpClient) {
     this.refreshAllRooms();
@@ -52,6 +54,11 @@ export class RoomService {
   }
 
   public refreshAllRooms() {
+    console.log('refreshroom called')
+
+    this.getRooms().pipe(map(x => x.body)).subscribe(rooms => {
+      this._rooms$.next(rooms);
+    });
     this.getEvents().pipe(map(x => x.body)).subscribe(events => {
       this._allEvents$.next(events.map(event => {
         event.start = new Date(Date.parse(event.startDate));
@@ -60,5 +67,17 @@ export class RoomService {
       }))
     });
 
+  }
+
+  modifyRoom(room: Room) {
+    return this.http.put(`${ROOMS_PATH}/${room.id}`, {location: room.location, name: room.name});
+  }
+
+  addRoom(room: Room) {
+    return this.http.post(ROOMS_PATH, {location: room.location, name: room.name});
+  }
+
+  delete(id: string) {
+    return this.http.delete(`${ROOMS_PATH}/${id}`);
   }
 }

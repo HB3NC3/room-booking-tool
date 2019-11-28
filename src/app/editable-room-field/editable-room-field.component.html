@@ -1,0 +1,46 @@
+<mat-form-field class="form-group">
+  <label for="name"></label>
+  <input
+    matInput
+    type="text"
+    placeholder="Name"
+    id="name"
+    name="name"
+    required
+    [(ngModel)]="name"
+    [disabled]="!isEditing"
+  >
+</mat-form-field>
+<mat-form-field class="form-group">
+  <label for="location"></label>
+  <input
+    matInput
+    type="text"
+    placeholder="Location"
+    id="location"
+    name="location"
+    required
+    [(ngModel)]="location"
+    [disabled]="!isEditing"
+  >
+</mat-form-field>
+<ng-container *ngIf="isEditing">
+  <mat-icon svgIcon="check" *ngIf="!isLoading" (click)="onSaveClick()"></mat-icon>
+  <div class="spinner" *ngIf="isLoading">
+    <mat-spinner [diameter]="20"></mat-spinner>
+  </div>
+  <mat-icon svgIcon="close" *ngIf="!isLoading" (click)="isEditing = false"></mat-icon>
+</ng-container>
+
+<ng-container *ngIf="isNew && !isEditing">
+  <mat-icon svgIcon="add" (click)="isEditing = true" *ngIf="!isLoading"></mat-icon>
+</ng-container>
+
+<ng-container *ngIf="!isNew && !isEditing">
+  <mat-icon svgIcon="edit" (click)="isEditing = true" *ngIf="!isLoading"></mat-icon>
+  <mat-icon svgIcon="delete" (click)="onDelete()" *ngIf="!isLoading"></mat-icon>
+  <div class="spinner" *ngIf="isLoading">
+    <mat-spinner [diameter]="20"></mat-spinner>
+  </div>
+</ng-container>
+
