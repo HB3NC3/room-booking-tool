@@ -27,6 +27,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DeletableListItemComponent } from './deletable-list-item/deletable-list-item.component';
 import { ErrorInterceptor } from './error/error-interceptor';
+import { RegisterFormComponent } from './register-form/register-form.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 const appRoutes: Routes = [
   {
@@ -45,6 +47,8 @@ const appRoutes: Routes = [
     EditableRoomFieldComponent,
     AddBookingComponent,
     DeletableListItemComponent,
+    RegisterFormComponent,
+    ManageUsersComponent,
   ],
   imports: [
     BrowserModule,

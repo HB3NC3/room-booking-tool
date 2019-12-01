@@ -1,0 +1,25 @@
+<div class="dialog-container">
+  <div class="dialog-title">Regisztráció</div>
+  <div>
+    <form class="form-container">
+      <div>
+        <mat-form-field class="form-group">
+          <input matInput type="text" placeholder="Felhasználónév" [(ngModel)]="userName" name="username" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="form-group">
+          <input matInput type="password" placeholder="Jelszó" [(ngModel)]="password" name="pass" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field class="form-group">
+          <input matInput type="password" placeholder="Jelszó mégegyszer" [(ngModel)]="passwordAgain" name="passAgain" required>
+        </mat-form-field>
+      </div>
+      <div>
+        <button id="create-btn" mat-raised-button type="submit" class="btn form-group" (click)="onSubmit()">Regisztráció</button>
+      </div>
+    </form>
+  </div>
+</div>

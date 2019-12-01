@@ -22,10 +22,12 @@ export class CustomDateAdapter extends NativeDateAdapter {
 export class DashboardComponent implements AfterViewInit {
   @ViewChild('leftDatePicker', {static: false}) calendar: MatCalendar<Date>;
   currentSelectedRange: {start: string, end: string};
+  eventEditing: RoomEvent;
   loginDialogOpen = false;
   manageRoomsDialogOpen = false;
   addBookingDialogOpen = false;
-  eventEditing: RoomEvent;
+  registerDialogOpen = false;
+  manageUsersDialogOpen = true;
 
   constructor(
     public loginService: LoginService,
@@ -56,18 +58,40 @@ export class DashboardComponent implements AfterViewInit {
     this.loginDialogOpen = true;
     this.closeManageRoomsDialog();
     this.closeAddBookingDialog();
+    this.closeManageUsersDialog();
+    this.closeRegisterDialog();
   }
 
   openManageRoomsDialog() {
     this.manageRoomsDialogOpen = true;
     this.closeLoginDialog();
     this.closeAddBookingDialog();
+    this.closeManageUsersDialog();
+    this.closeRegisterDialog();
   }
 
   openAddBookingDialog() {
     this.addBookingDialogOpen = true;
     this.closeLoginDialog();
-    this.closeManageRoomsDialog()
+    this.closeManageRoomsDialog();
+    this.closeManageUsersDialog();
+    this.closeRegisterDialog();
+  }
+
+  openManageUsersDialog() {
+    this.manageUsersDialogOpen = true;
+    this.closeLoginDialog();
+    this.closeManageRoomsDialog();
+    this.closeRegisterDialog();
+    this.closeAddBookingDialog();
+  }
+
+  openRegisterDialog() {
+    this.registerDialogOpen = true;
+    this.closeLoginDialog();
+    this.closeManageRoomsDialog();
+    this.closeManageUsersDialog();
+    this.closeAddBookingDialog();
   }
 
   closeAddBookingDialog() {
@@ -83,12 +107,12 @@ export class DashboardComponent implements AfterViewInit {
     this.manageRoomsDialogOpen = false;
   }
 
-  openManageUsersDialog() {
-
+  closeManageUsersDialog() {
+    this.manageUsersDialogOpen = false;
   }
 
-  openRegisterDialog() {
-
+  closeRegisterDialog() {
+    this.registerDialogOpen = false;
   }
 
   editEvent(event: RoomEvent) {

@@ -65,6 +65,16 @@
   <app-add-booking (onCloseDialog)="closeAddBookingDialog()" [event]="eventEditing"></app-add-booking>
 </div>
 
+<div class="modal-dialog register" *ngIf="registerDialogOpen">
+  <div class="close-button topright" (click)="closeRegisterDialog()">&times;</div>
+  <app-register-form (onCloseDialog)="closeRegisterDialog()"></app-register-form>
+</div>
+
+<div class="modal-dialog manage-users" *ngIf="manageUsersDialogOpen">
+  <div class="close-button topright" (click)="closeManageUsersDialog()">&times;</div>
+  <app-manage-users (onCloseDialog)="closeManageUsersDialog()"></app-manage-users>
+</div>
+
 <div class="error-container" *ngIf="errorService.error$ | async as message">
   <div class="error">
     {{message}}
