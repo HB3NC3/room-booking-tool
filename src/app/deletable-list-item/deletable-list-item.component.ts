@@ -7,11 +7,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class DeletableListItemComponent {
   @Input() name = '';
+  @Input() disabled = false;
   @Output() closeClicked = new EventEmitter<void>();
 
   constructor() { }
 
   remove() {
+    if (this.disabled) {
+      return;
+    }
     this.closeClicked.emit();
   }
 }

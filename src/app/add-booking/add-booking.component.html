@@ -1,9 +1,9 @@
 <div class="dialog-container">
-  <div class="dialog-title">{{!!event ? 'Esemény módosítása' : 'Esemény létrehozása'}}</div>
+  <div class="dialog-title">{{loginService.isGuest() ? 'Esemény információ' : (!!event ? 'Esemény módosítása' : 'Esemény létrehozása')}}</div>
   <form class="row">
     <div class="left-box">
       <div class="checkbox">
-        <mat-checkbox  [(ngModel)]="isPrivate" name="isPrivateCheckBox">Privát esemény</mat-checkbox>
+        <mat-checkbox  [(ngModel)]="isPrivate" name="isPrivateCheckBox" [disabled]="loginService.isGuest()">Privát esemény</mat-checkbox>
       </div>
       <mat-form-field class="form-group">
         <label for="name"></label>
@@ -15,6 +15,7 @@
           name="name"
           required
           [(ngModel)]="name"
+          [disabled]="loginService.isGuest()"
         >
       </mat-form-field>
       <mat-form-field>
@@ -24,18 +25,19 @@
           name="description"
           [(ngModel)]="description"
           [maxLength]="300"
+          [disabled]="loginService.isGuest()"
         ></textarea>
       </mat-form-field>
     </div>
     <div class="right-box">
       <div class="controller-container">
         <mat-form-field class="date-picker">
-          <input matInput [matDatepicker]="startPicker" placeholder="Kezdő dátum" [value]="startDate" (dateChange)="startDate = $event.value">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
+          <input matInput [matDatepicker]="startPicker" placeholder="Kezdő dátum" [value]="startDate" (dateChange)="startDate = $event.value"  [disabled]="loginService.isGuest()">
+          <mat-datepicker-toggle matSuffix [for]="startPicker" [disabled]="loginService.isGuest()"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker [disabled]="loginService.isGuest()"></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="time-picker">
-          <mat-select [(value)]="startTime" (selectionChange)="timeSelected()">
+          <mat-select [(value)]="startTime" (selectionChange)="timeSelected()"  [disabled]="loginService.isGuest()">
             <mat-option *ngFor="let startTime of startTimes" [value]="startTime">
               {{startTime.name}}
             </mat-option>
@@ -44,12 +46,12 @@
       </div>
       <div class="controller-container">
         <mat-form-field class="date-picker">
-          <input matInput [matDatepicker]="endPicker" [min]="startPicker._selected" placeholder="Befejező dátum" [value]="endDate" (dateChange)="endDate = $event.value">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
+          <input matInput [matDatepicker]="endPicker" [min]="startPicker._selected" placeholder="Befejező dátum" [value]="endDate" (dateChange)="endDate = $event.value"  [disabled]="loginService.isGuest()">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"  [disabled]="loginService.isGuest()"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker  [disabled]="loginService.isGuest()"></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="time-picker">
-          <mat-select [(value)]="endTime">
+          <mat-select [(value)]="endTime" [disabled]="loginService.isGuest()">
             <mat-option *ngFor="let endTime of endTimes" [value]="endTime">
               {{endTime.name}}
             </mat-option>
@@ -61,13 +63,13 @@
         <div class="rooms-container">
           <div class="row">
             <mat-form-field class="room-picker">
-              <mat-select [(value)]="roomOnFocus">
+              <mat-select [(value)]="roomOnFocus" [disabled]="loginService.isGuest()">
                 <mat-option *ngFor="let room of availableRooms" [value]="room">
                   {{room.name}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <mat-icon svgIcon="add" (click)="addRoom(roomOnFocus)"></mat-icon>
+            <mat-icon svgIcon="add" (click)="onAddRoomClick(roomOnFocus)"></mat-icon>
           </div>
           <div class="scrollable">
             <div class="room-list">
@@ -75,19 +77,21 @@
                 *ngFor="let room of selectedRooms"
                 [name]="room.name"
                 (closeClicked)="removeRoom(room)"
+                [disabled]="loginService.isGuest()"
               ></app-deletable-list-item>
             </div>
           </div>
         </div>
       </div>
       <div class="button-container row">
-        <button id="btn" mat-raised-button  type="submit" class="btn" (click)="sendCreateRequest()">Mentés</button>
+        <button [disabled]="loginService.isGuest()" id="btn" mat-raised-button  type="submit" class="btn" (click)="sendCreateRequest()">Mentés</button>
         <button
           id="delete-btn"
           mat-raised-button
           type="submit"
           class="btn"
           *ngIf="!!event"
+          [disabled]="loginService.isGuest()"
           (click)="sendDeleteRequest()">Törlés</button>
       </div>
     </div>

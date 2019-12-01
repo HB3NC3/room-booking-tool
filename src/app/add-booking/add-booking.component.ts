@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Room, RoomService } from '../dashboard/room.service';
 import { EventService, RoomEvent } from '../dashboard/event.service';
 import { ErrorService } from '../error/error.service';
+import { LoginService } from '../login/login.service';
 
 export interface TimeOption {
   name: string,
@@ -37,7 +38,8 @@ export class AddBookingComponent implements OnInit {
   constructor(
     private roomService: RoomService,
     private eventService: EventService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private loginService: LoginService
   ) {
     this.roomService.rooms$.subscribe(rooms => {
       this.availableRooms = [...rooms];
@@ -157,6 +159,13 @@ export class AddBookingComponent implements OnInit {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     return this.startTimes.find(time => time.value.value === Math.floor((hours * 60 + minutes) / 5) * 5);
+  }
+
+  onAddRoomClick(room: Room) {
+    if (this.loginService.isGuest()) {
+      return;
+    }
+    this.addRoom(room);
   }
 }
 

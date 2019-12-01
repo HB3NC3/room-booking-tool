@@ -156,7 +156,7 @@ app-calendar {
 }
 
 @keyframes dialog {
-  from {opacity: 0}
+  from {opacity: 0.4}
   to {opacity: 1}
 }
 
@@ -192,14 +192,15 @@ app-calendar {
   left: calc(50% - 250px);
   width: 500px;
   text-align: center;
-  margin-top: 20px;
   background: #fb5757;
   border-radius: 25px;
   min-height: 35px;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   color: #404040;
   animation-name: moveDown;
-  animation-duration: 0.4s
+  animation-duration: 0.4s;
+  margin-top: 20px;
+  padding: 5px;
 }
 
 @keyframes moveDown {

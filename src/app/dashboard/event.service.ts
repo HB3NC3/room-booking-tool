@@ -117,7 +117,7 @@ export class EventService {
       endDate: interval.end.toISOString()
     };
     const httpParams = new HttpParams().set('id', roomId);
-    return this.http.post<RoomEvent[]>(`${EVENTS_PATH}/interval/id`, postBody, {observe: 'response', params: httpParams});
+    return this.http.post<RoomEvent[]>(`${EVENTS_PATH}/interval/${roomId}`, postBody, {observe: 'response', params: httpParams});
   }
 
   deleteEvent(id: string) {
