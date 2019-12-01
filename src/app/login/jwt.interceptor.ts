@@ -20,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
     }
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
+        if (error.status === 403) {
           this.loginService.logout();
         }
         return throwError(error);

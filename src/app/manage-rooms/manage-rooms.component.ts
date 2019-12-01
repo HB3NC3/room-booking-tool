@@ -7,7 +7,7 @@ import { RoomService } from '../dashboard/room.service';
   styleUrls: ['./manage-rooms.component.less']
 })
 export class ManageRoomsComponent implements OnInit {
-  constructor(private roomService: RoomService) { }
+  constructor(public roomService: RoomService) { }
 
   ngOnInit() {
   }

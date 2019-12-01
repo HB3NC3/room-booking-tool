@@ -39,7 +39,7 @@ export class AddBookingComponent implements OnInit {
     private roomService: RoomService,
     private eventService: EventService,
     private errorService: ErrorService,
-    private loginService: LoginService
+    public loginService: LoginService
   ) {
     this.roomService.rooms$.subscribe(rooms => {
       this.availableRooms = [...rooms];
