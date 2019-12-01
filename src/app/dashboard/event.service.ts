@@ -52,9 +52,14 @@ export class EventService {
     combineLatest(
       this.roomService.currentSelectedRoom$,
       this.currentRange$,
-      this.loginService.loginChanged$
+      this.loginService.loginChanged$,
     ).pipe(
-      switchMap(([room, range]) => this.getEvents$(room.id, range)),
+      switchMap(([room, range]) => {
+        if (!room) {
+          return of({body: []});
+        }
+        return this.getEvents$(room.id, range)
+      }),
       map(x => x.body),
       map(events => {
         events.forEach(event => {

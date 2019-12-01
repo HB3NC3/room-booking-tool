@@ -34,8 +34,8 @@ export class RoomService {
 
   public refreshAllRooms() {
     this.getRooms().pipe(map(x => x.body), catchError(() => of([]))).subscribe(rooms => {
-      this.selectRoom(rooms && rooms[0]);
       this._rooms$.next(rooms);
+      this.selectRoom(rooms && rooms[0]);
     });
   }
 

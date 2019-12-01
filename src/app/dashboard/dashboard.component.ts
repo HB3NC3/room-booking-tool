@@ -27,7 +27,7 @@ export class DashboardComponent implements AfterViewInit {
   manageRoomsDialogOpen = false;
   addBookingDialogOpen = false;
   registerDialogOpen = false;
-  manageUsersDialogOpen = true;
+  manageUsersDialogOpen = false;
 
   constructor(
     public loginService: LoginService,

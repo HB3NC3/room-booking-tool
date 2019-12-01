@@ -71,7 +71,6 @@ export class AddBookingComponent implements OnInit {
       this.endDate = this.event.end;
       this.startTime = this.getTime(this.event.start);
       this.endTime = this.getTime(this.event.end);
-      console.log(this.startTime, this.endTime);
     }
 
     if (!this.event) {

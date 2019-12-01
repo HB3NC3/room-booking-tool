@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
 
 export enum Role {
@@ -17,12 +17,14 @@ const LOGIN_PATH = '/teremfoglalo/system-user/login';
   providedIn: 'root'
 })
 export class LoginService {
-  private _loginChanged$ = new BehaviorSubject<void>(null);
+  private _loginChanged$ = new ReplaySubject<void>(1);
   public loginChanged$: Observable<void> = this._loginChanged$.asObservable();
 
   constructor(
     private http: HttpClient
-  ) {}
+  ) {
+    this._loginChanged$.next();
+  }
 
   login(userName: string, password: string): Observable<boolean> {
     return this.sendLoginRequest(userName, password).pipe(
