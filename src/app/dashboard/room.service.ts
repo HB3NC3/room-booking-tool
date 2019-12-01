@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable, of, ReplaySubject } from 'rxjs';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 const ROOMS_PATH = '/teremfoglalo/room';
 
@@ -33,7 +33,8 @@ export class RoomService {
   }
 
   public refreshAllRooms() {
-    this.getRooms().pipe(map(x => x.body)).subscribe(rooms => {
+    this.getRooms().pipe(map(x => x.body), catchError(() => of([]))).subscribe(rooms => {
+      this.selectRoom(rooms && rooms[0]);
       this._rooms$.next(rooms);
     });
   }

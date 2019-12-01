@@ -26,6 +26,7 @@ import { AddBookingComponent } from './add-booking/add-booking.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DeletableListItemComponent } from './deletable-list-item/deletable-list-item.component';
+import { ErrorInterceptor } from './error/error-interceptor';
 
 const appRoutes: Routes = [
   {
@@ -65,6 +66,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     AuthGuard,
     {provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig},
     {provide: MAT_DATE_LOCALE, useValue: 'hu-HU'},

@@ -9,9 +9,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   constructor(
     private loginService: LoginService
-  ) {
-
-  }
+  ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.loginService.token;

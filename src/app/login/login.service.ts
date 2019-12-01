@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import {Observable, of} from 'rxjs';
-import { catchError, map, startWith, tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
 
 export enum Role {
   REGISTERED,
@@ -18,10 +17,11 @@ const LOGIN_PATH = '/teremfoglalo/system-user/login';
   providedIn: 'root'
 })
 export class LoginService {
+  private _loginChanged$ = new BehaviorSubject<void>(null);
+  public loginChanged$: Observable<void> = this._loginChanged$.asObservable();
 
   constructor(
-    private http: HttpClient,
-    private router: Router
+    private http: HttpClient
   ) {}
 
   login(userName: string, password: string): Observable<boolean> {
@@ -37,7 +37,7 @@ export class LoginService {
         if (!response) {
           return false;
         }
-        saveCredentials(userName, response.token, response.role);
+        this.saveCredentials(userName, response.token, response.role);
         return true;
       }),
       startWith(null)
@@ -52,6 +52,7 @@ export class LoginService {
     localStorage.removeItem(TOKEN);
     localStorage.removeItem(USER);
     localStorage.removeItem(ROLE);
+    this._loginChanged$.next();
   }
 
   get userName(): string {
@@ -74,10 +75,11 @@ export class LoginService {
   private sendLoginRequest(username: string, password: string): Observable<HttpResponse<string>> {
     return this.http.post<string>(LOGIN_PATH, {username: username, password}, {observe: 'response'});
   }
-}
 
-function saveCredentials(userName: string, token: string, role: Role) {
-  localStorage.setItem(TOKEN, token);
-  localStorage.setItem(USER, userName);
-  localStorage.setItem(ROLE, Role[role]);
+  private saveCredentials(userName: string, token: string, role: Role) {
+    localStorage.setItem(TOKEN, token);
+    localStorage.setItem(USER, userName);
+    localStorage.setItem(ROLE, Role[role]);
+    this._loginChanged$.next();
+  }
 }

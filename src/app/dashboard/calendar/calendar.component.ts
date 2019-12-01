@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { combineLatest } from 'rxjs';
 import { EventService, RoomEvent } from '../event.service';
 
@@ -9,6 +9,7 @@ interface time {
 }
 
 interface EventEntry {
+  id: string;
   name: string;
   range: string
   start: number;
@@ -21,6 +22,8 @@ interface EventEntry {
   styleUrls: ["./calendar.component.less"]
 })
 export class CalendarComponent {
+  @Output() eventClicked = new EventEmitter<RoomEvent>();
+  private events: RoomEvent[];
   headers: number[] = [];
   hours: time[];
   eventsByDay: EventEntry[][] = [[],[],[],[],[],[],[]];
@@ -55,6 +58,7 @@ export class CalendarComponent {
       this.eventService.currentRange$,
       this.eventService.events$
     ).subscribe(([currentRange, allEvents]) => {
+      this.events = allEvents;
       this.eventsByDay = [[],[],[],[],[],[],[]];
       allEvents.forEach(event => {
         const eventStartDay = (event.start.getDay() + 6) % 7;
@@ -63,6 +67,7 @@ export class CalendarComponent {
           if (event.end.valueOf() > currentRange.end.valueOf()) {
             [...Array(7).keys()].forEach(x => {
               this.eventsByDay[x].push({
+                id: event.id,
                 start: 0,
                 height: 24,
                 name: x ? '' : event.name,
@@ -73,6 +78,7 @@ export class CalendarComponent {
             // range elejetol az event vegeig szinezni
             [...Array(eventEndDay).keys()].forEach(x => {
               this.eventsByDay[x].push({
+                id: event.id,
                 start: 0,
                 height: 24,
                 name: x ? '' : event.name,
@@ -80,6 +86,7 @@ export class CalendarComponent {
               })
             });
             this.eventsByDay[eventEndDay].push({
+              id: event.id,
               start: 0,
               height: getNumberFormDate(event.end),
               name: '', //event.name,
@@ -90,6 +97,7 @@ export class CalendarComponent {
         } else if ( event.end.valueOf() > currentRange.end.valueOf()) {
           if (event.start.valueOf() < currentRange.end.valueOf()) {
             this.eventsByDay[eventStartDay].push({
+              id: event.id,
               start: getNumberFormDate(event.start),
               height: 24 - getNumberFormDate(event.start),
               name: event.name,
@@ -97,6 +105,7 @@ export class CalendarComponent {
             });
             [...Array(6 - eventStartDay).keys()].forEach(x => {
               this.eventsByDay[x + eventStartDay + 1].push({
+                id: event.id,
                 start: 0,
                 height: 24,
                 name: '', //event.name,
@@ -110,6 +119,7 @@ export class CalendarComponent {
           if (eventStartDay === eventEndDay) {
             //egy napon belul van
             this.eventsByDay[eventStartDay].push({
+              id: event.id,
               start: getNumberFormDate(event.start),
               height: getNumberFormDate(event.end) - getNumberFormDate(event.start),
               name: event.name,
@@ -118,6 +128,7 @@ export class CalendarComponent {
             return;
           }
           this.eventsByDay[eventStartDay].push({
+            id: event.id,
             start: getNumberFormDate(event.start),
             height: 24 - getNumberFormDate(event.start),
             name: event.name,
@@ -125,6 +136,7 @@ export class CalendarComponent {
           });
 
           this.eventsByDay[eventEndDay].push({
+            id: event.id,
             start: 0,
             height: getNumberFormDate(event.end),
             name: '', //event.name,
@@ -132,6 +144,7 @@ export class CalendarComponent {
           });
           [...Array(eventEndDay - 1 - eventStartDay).keys()].forEach(x => {
             this.eventsByDay[x + eventStartDay + 1].push({
+              id: event.id,
               start: 0,
               height: 24,
               name: '', // event.name,
@@ -142,6 +155,11 @@ export class CalendarComponent {
         }
       });
     })
+  }
+
+  onClick(eventEntry: EventEntry) {
+    const event = this.events.find(event => event.id === eventEntry.id);
+    this.eventClicked.emit(event);
   }
 }
 

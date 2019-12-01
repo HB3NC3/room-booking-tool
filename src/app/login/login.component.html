@@ -1,15 +1,15 @@
-<h1>Login</h1>
+<h1>Bejelentkezés</h1>
 <form class="loginForm">
   <mat-form-field class="form-group">
     <label for="userName"></label>
-    <input matInput type="text" placeholder="Username" id="userName" [(ngModel)]="userName" name="userName" required>
+    <input matInput type="text" placeholder="Felhasználónév" id="userName" [(ngModel)]="userName" name="userName" required>
   </mat-form-field>
   <mat-form-field class="form-group">
     <label for="password"></label>
-    <input matInput type="password" id="password" [(ngModel)]="password" name="password" placeholder="Password" required>
+    <input matInput type="password" id="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
   </mat-form-field>
   <button id="btn" mat-raised-button  type="submit" [disabled]="!userName || !password" class="btn" (click)="sendLoginRequest()">
-    Login
+    Bejelentkezés
   </button>
-  <div class="error" *ngIf="invalid">Invalid user/password</div>
+  <div class="error" *ngIf="invalid">Hibás felhasználónév/jelszó</div>
 </form>

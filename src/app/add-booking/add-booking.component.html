@@ -1,5 +1,5 @@
 <div class="dialog-container">
-  <div class="dialog-title">Add booking</div>
+  <div class="dialog-title">{{!!event ? 'Esemény módosítása' : 'Esemény létrehozása'}}</div>
   <form class="row">
     <div class="left-box">
       <div class="checkbox">
@@ -10,7 +10,7 @@
         <input
           matInput
           type="text"
-          placeholder="Name"
+          placeholder="Esemény neve"
           id="name"
           name="name"
           required
@@ -18,7 +18,13 @@
         >
       </mat-form-field>
       <mat-form-field>
-        <textarea matInput placeholder="Description" name="description" [(ngModel)]="description"></textarea>
+        <textarea
+          matInput
+          placeholder="Leírás"
+          name="description"
+          [(ngModel)]="description"
+          [maxLength]="300"
+        ></textarea>
       </mat-form-field>
     </div>
     <div class="right-box">
@@ -29,7 +35,7 @@
           <mat-datepicker #startPicker></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="time-picker">
-          <mat-select [(value)]="selectedStartTime" (selectionChange)="timeSelected()">
+          <mat-select [(value)]="startTime" (selectionChange)="timeSelected()">
             <mat-option *ngFor="let startTime of startTimes" [value]="startTime">
               {{startTime.name}}
             </mat-option>
@@ -43,12 +49,46 @@
           <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="time-picker">
-          <mat-select [(value)]="selectedEndTime">
+          <mat-select [(value)]="endTime">
             <mat-option *ngFor="let endTime of endTimes" [value]="endTime">
               {{endTime.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>
+      </div>
+      <div class="device-adder">
+        <mat-label>Termek</mat-label>
+        <div class="rooms-container">
+          <div class="row">
+            <mat-form-field class="room-picker">
+              <mat-select [(value)]="roomOnFocus">
+                <mat-option *ngFor="let room of availableRooms" [value]="room">
+                  {{room.name}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-icon svgIcon="add" (click)="addRoom(roomOnFocus)"></mat-icon>
+          </div>
+          <div class="scrollable">
+            <div class="room-list">
+              <app-deletable-list-item
+                *ngFor="let room of selectedRooms"
+                [name]="room.name"
+                (closeClicked)="removeRoom(room)"
+              ></app-deletable-list-item>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button-container row">
+        <button id="btn" mat-raised-button  type="submit" class="btn" (click)="sendCreateRequest()">Mentés</button>
+        <button
+          id="delete-btn"
+          mat-raised-button
+          type="submit"
+          class="btn"
+          *ngIf="!!event"
+          (click)="sendDeleteRequest()">Törlés</button>
       </div>
     </div>
   </form>

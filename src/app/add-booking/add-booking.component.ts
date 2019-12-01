@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { RoomService } from '../dashboard/room.service';
-import { EventService, ONE_HOUR_MS, RoomEvent } from '../dashboard/event.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Room, RoomService } from '../dashboard/room.service';
+import { EventService, RoomEvent } from '../dashboard/event.service';
+import { ErrorService } from '../error/error.service';
 
 export interface TimeOption {
   name: string,
@@ -17,29 +18,31 @@ export interface TimeOption {
   styleUrls: ['./add-booking.component.less']
 })
 export class AddBookingComponent implements OnInit {
+  @Input() event: RoomEvent;
   @Output() onCloseDialog = new EventEmitter();
-  private loading = false;
-  private invalid = false;
-  private event: RoomEvent = {
-    name: 'New Event',
-    description: '',
-    start: new Date(),
-    end: new Date(new Date().valueOf() + ONE_HOUR_MS),
-    roomIds: []
-  } as RoomEvent;
-  selectedStartTime: TimeOption;
-  startTimes: TimeOption[];
-  selectedEndTime: TimeOption;
-  endTimes: TimeOption[];
   startDate: Date = new Date();
+  startTime: TimeOption;
   endDate: Date = new Date();
-  name = 'Event name';
+  endTime: TimeOption;
+
+  startTimes: TimeOption[];
+  endTimes: TimeOption[];
+  name = 'Esemény1';
   description = '';
   isPrivate = true;
+  availableRooms: Room[] = [];
+  selectedRooms: Room[] = [];
+  roomOnFocus: Room;
+
   constructor(
     private roomService: RoomService,
-    private eventService: EventService
+    private eventService: EventService,
+    private errorService: ErrorService
   ) {
+    this.roomService.rooms$.subscribe(rooms => {
+      this.availableRooms = [...rooms];
+      this.roomOnFocus = this.availableRooms[0];
+    });
     this.startTimes = [];
     for (let i = 0; i < 24; i++) {
       for (let j = 0; j < 12; j++) {
@@ -57,34 +60,106 @@ export class AddBookingComponent implements OnInit {
   }
 
   ngOnInit() {
-    const now = new Date();
-    this.selectedStartTime = this.startTimes.find(x => x.value.value === (Math.ceil((now.getHours() * 60 + now.getMinutes()) / 5) * 5));
-    this.timeSelected();
+    if (!!this.event) {
+      this.name = this.event.name;
+      this.description = this.event.description;
+      this.isPrivate = this.event.isPrivate;
+      this.event.roomList.forEach(room => this.addRoom(room));
+      this.startDate = this.event.start;
+      this.endDate = this.event.end;
+      this.startTime = this.getTime(this.event.start);
+      this.endTime = this.getTime(this.event.end);
+      console.log(this.startTime, this.endTime);
+    }
+
+    if (!this.event) {
+      const now = new Date();
+      this.startTime = this.startTimes.find(x => x.value.value === (Math.ceil((now.getHours() * 60 + now.getMinutes()) / 5) * 5));
+      this.startTime = this.startTime || this.startTimes[this.startTimes.length - 1];
+      this.timeSelected();
+      this.roomService.currentSelectedRoom$.subscribe(room => {
+        this.addRoom(room);
+      });
+    }
   }
 
-
-  sendCreateRequest() {
-    if (!(this.event.name && this.event.roomIds.length)) {
+  addRoom(room: Room) {
+    if (!room) {
       return;
     }
-    this.eventService.addEvent(this.event).subscribe(success => {
-      if (success) {
-        this.onCloseDialog.emit();
-        this.loading = false;
-        return;
-      } else if (success === null) {
-        this.loading = true;
-        return;
-      }
-      this.loading = false;
-      this.invalid = true;
+    const roomToAdd = this.availableRooms.find(x => x.id === room.id);
+    if (roomToAdd) {
+      this.selectedRooms.push(room);
+      this.availableRooms = this.availableRooms.filter(x => x.id !== room.id);
+      this.roomOnFocus = this.availableRooms[0];
+    }
+  }
+
+  removeRoom(room: Room) {
+    this.selectedRooms = this.selectedRooms.filter(x => x.id !== room.id);
+    this.availableRooms.push(room);
+    this.roomOnFocus = this.availableRooms[0];
+  }
+
+  sendCreateRequest() {
+    if (!this.name) {
+      this.errorService.notifyError('Hiányzó név');
       return;
-    });
+    }
+    if (!this.selectedRooms.length) {
+      this.errorService.notifyError('Adj hozzá termet!');
+      return;
+    }
+
+    const event: RoomEvent = {
+      roomIds: this.selectedRooms.map(x => x.id),
+      start: getDate(this.startDate, this.startTime),
+      end: getDate(this.endDate, this.endTime),
+      name: this.name,
+      description: this.description,
+      isPrivate: this.isPrivate
+    } as RoomEvent;
+    if (!!this.event) {
+      event.id = this.event.id;
+      this.eventService.modifyEvent(event).subscribe(() => {
+          this.eventService.refresh();
+          this.onCloseDialog.emit();
+        },
+        () => {
+        }
+      );
+      return;
+    }
+    this.eventService.addEvent(event).subscribe(() => {
+        this.eventService.refresh();
+        this.onCloseDialog.emit();
+      },
+      () => {
+      }
+    );
   }
 
   timeSelected() {
-    this.endTimes = this.startTimes.filter(x => x.value.value > this.selectedStartTime.value.value);
-    const oneHourLater = this.startTimes.find(x => x.value.value === (this.selectedStartTime.value.value + 60));
-    this.selectedEndTime = oneHourLater || this.startTimes[this.startTimes.length - 1];
+    this.endTimes = this.startTimes.filter(x => x.value.value > this.startTime.value.value);
+    const oneHourLater = this.startTimes.find(x => x.value.value === (this.startTime.value.value + 60));
+    this.endTime = oneHourLater || this.startTimes[this.startTimes.length - 1];
   }
+
+  sendDeleteRequest() {
+    this.eventService.deleteEvent(this.event.id).subscribe(() => {
+      this.eventService.refresh();
+      this.onCloseDialog.emit();
+    },
+      () => {});
+  }
+
+  private getTime(date: Date): TimeOption {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return this.startTimes.find(time => time.value.value === Math.floor((hours * 60 + minutes) / 5) * 5);
+  }
+}
+
+function getDate(date: Date, time: TimeOption): Date {
+  return new Date(date.setHours(time.value.hours, time.value.minutes));
 }

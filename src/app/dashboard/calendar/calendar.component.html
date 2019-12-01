@@ -26,6 +26,7 @@
             <div class="events">
               <div
                 *ngFor="let event of events"
+                (click)="onClick(event)"
                 class="event"
                 [style.width]="100 + '%'"
                 [style.left]="0 + '%'"

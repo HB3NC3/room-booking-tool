@@ -101,6 +101,7 @@
 }
 
 .event {
+  cursor: pointer;
   position: absolute;
   border-radius: 4px;
   left: 0;
@@ -109,6 +110,11 @@
   color: white;
   z-index: 5;
   box-shadow: 0 0 10px 1px rgba(112, 146, 251, 0.5);
+  border: solid 1px #64626275;
+  &:hover {
+    box-shadow: 0 0 10px 1px rgba(22, 29, 49, 0.5);
+    z-index: 20;
+  }
 }
 
 .events {

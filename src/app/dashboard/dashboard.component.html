@@ -15,18 +15,18 @@
         <button class="header-item" mat-raised-button type="submit" *ngIf="loginService.isLoggedIn()" (click)="openAddBookingDialog()">
           <div class="row">
             <mat-icon id="addEventIcon" svgIcon="add_alert"></mat-icon>
-            <div>Add booking</div>
+            <div>Esemény létrehozása</div>
           </div>
         </button>
         <button class="header-item" mat-raised-button [matMenuTriggerFor]="userMenu">
-          <b>{{loginService.userName || 'Guest' }}</b>
+          <b>{{loginService.userName || 'Vendég' }}</b>
         </button>
         <mat-menu #userMenu="matMenu">
-          <button mat-menu-item (click)="openLoginDialog()" *ngIf="!loginService.isLoggedIn()">Login</button>
-          <button mat-menu-item (click)="openRegisterDialog()" *ngIf="!loginService.isLoggedIn()">Register</button>
-          <button mat-menu-item (click)="openManageRoomsDialog()" *ngIf="loginService.isAdmin()">Manage rooms</button>
-          <button mat-menu-item (click)="openManageUsersDialog()" *ngIf="loginService.isAdmin()">Manage users</button>
-          <button mat-menu-item (click)="loginService.logout()" *ngIf="loginService.isLoggedIn()">Logout</button>
+          <button mat-menu-item (click)="openLoginDialog()" *ngIf="!loginService.isLoggedIn()">Bejelentkezés</button>
+          <button mat-menu-item (click)="openRegisterDialog()" *ngIf="!loginService.isLoggedIn()">Regisztráció</button>
+          <button mat-menu-item (click)="openManageRoomsDialog()" *ngIf="loginService.isAdmin()">Termek kezelése</button>
+          <button mat-menu-item (click)="openManageUsersDialog()" *ngIf="loginService.isAdmin()">Felhasználók kezelése</button>
+          <button mat-menu-item (click)="loginService.logout()" *ngIf="loginService.isLoggedIn()">Kijelentkezés</button>
         </mat-menu>
       </div>
     </div>
@@ -36,18 +36,18 @@
   <div class="left-menu">
     <div class="room-selector" *ngIf="roomService.rooms$ | async as rooms">
       <mat-form-field>
-        <mat-label>Select a room!</mat-label>
-        <mat-select (valueChange)="roomService.selectRoom($event)">
+        <mat-label>Válassz termet!</mat-label>
+        <mat-select (valueChange)="roomService.selectRoom($event)" [value]="roomService.currentSelectedRoom$ | async">
           <mat-option *ngFor="let room of rooms" [value]="room">{{room.name}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div class="datepicker-container">
-      <mat-calendar #leftDatePicker [(selected)]="currentSelectedDate" (selectedChange)="selectDate($event)"></mat-calendar>
+      <mat-calendar #leftDatePicker [selected]="eventService.currentSelectedDate$ | async" (selectedChange)="selectDate($event)"></mat-calendar>
     </div>
   </div>
   <div class="calendar-container">
-    <app-calendar></app-calendar>
+    <app-calendar (eventClicked)="editEvent($event)"></app-calendar>
   </div>
 </div>
 <div class="modal-dialog" *ngIf="loginDialogOpen">
@@ -62,5 +62,11 @@
 
 <div class="modal-dialog add-booking" *ngIf="addBookingDialogOpen">
   <div class="close-button topright" (click)="closeAddBookingDialog()">&times;</div>
-  <app-add-booking (onCloseDialog)="closeAddBookingDialog()"></app-add-booking>
+  <app-add-booking (onCloseDialog)="closeAddBookingDialog()" [event]="eventEditing"></app-add-booking>
+</div>
+
+<div class="error-container" *ngIf="errorService.error$ | async as message">
+  <div class="error">
+    {{message}}
+  </div>
 </div>

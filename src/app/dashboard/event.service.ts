@@ -3,6 +3,7 @@ import { Room, RoomService } from './room.service';
 import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { LoginService } from '../login/login.service';
 
 const EVENTS_PATH = '/teremfoglalo/event';
 export const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -20,7 +21,7 @@ export interface RoomEvent {
   start?: Date;
   end?: Date;
   endDate: string;
-  isPrivate: true;
+  isPrivate: boolean;
   roomList: Room[];
   roomIds: string[];
 }
@@ -44,12 +45,14 @@ export class EventService {
 
   constructor(
     private http: HttpClient,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private loginService: LoginService
   ) {
     this.selectDate(new Date());
     combineLatest(
-      roomService.currentSelectedRoom$,
-      this.currentRange$
+      this.roomService.currentSelectedRoom$,
+      this.currentRange$,
+      this.loginService.loginChanged$
     ).pipe(
       switchMap(([room, range]) => this.getEvents$(room.id, range)),
       map(x => x.body),
@@ -87,8 +90,25 @@ export class EventService {
       isPrivate: event.isPrivate,
       roomIds: event.roomIds,
       startDate: event.start.toISOString(),
-      endDate: event.end.toISOString()
-    });
+      endDate: event.end.toISOString(),
+      description: event.description,
+      name: event.name
+    } as RoomEvent);
+  }
+
+  public refresh() {
+    this.selectDate(this._currentDate);
+  }
+
+  public modifyEvent(event: RoomEvent) {
+    return this.http.put(`${EVENTS_PATH}/${event.id}`, {
+      isPrivate: event.isPrivate,
+      roomIds: event.roomIds,
+      startDate: event.start.toISOString(),
+      endDate: event.end.toISOString(),
+      description: event.description,
+      name: event.name
+    } as RoomEvent);
   }
 
   private getEvents$(roomId: string, interval: Interval): Observable<HttpResponse<RoomEvent[]>> {
@@ -97,7 +117,11 @@ export class EventService {
       endDate: interval.end.toISOString()
     };
     const httpParams = new HttpParams().set('id', roomId);
-    return this.http.post<RoomEvent[]>(`${EVENTS_PATH}/interval`, postBody, {observe: 'response', params: httpParams});
+    return this.http.post<RoomEvent[]>(`${EVENTS_PATH}/interval/id`, postBody, {observe: 'response', params: httpParams});
+  }
+
+  deleteEvent(id: string) {
+    return this.http.delete(`${EVENTS_PATH}/${id}`);
   }
 }
 

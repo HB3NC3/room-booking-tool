@@ -143,12 +143,12 @@ app-calendar {
   right: auto;
   left: 50%;
   top: 50%;
-  z-index: 9;
+  z-index: 900;
   width: 500px;
   height: 400px;
   margin-left: -250px;
   margin-top: -200px;
-  background: #4c63e3db;
+  background: #4c63e3e8;
   border-radius: 20px;
   box-shadow: 0 4px 10px 5px rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   animation-name: dialog;
@@ -178,6 +178,35 @@ app-calendar {
 }
 
 .add-booking {
-  width: 600px;
-  margin-left: -300px;
+  width: 800px;
+  height: 500px;
+  margin-left: -400px;
+  margin-top: -250px;
+}
+
+.error-container {
+  display: flex;
+  position: absolute;
+  top: 0;
+  z-index: 500;
+  left: calc(50% - 250px);
+  width: 500px;
+  text-align: center;
+  margin-top: 20px;
+  background: #fb5757;
+  border-radius: 25px;
+  min-height: 35px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  color: #404040;
+  animation-name: moveDown;
+  animation-duration: 0.4s
+}
+
+@keyframes moveDown {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.error {
+  margin: auto;
 }

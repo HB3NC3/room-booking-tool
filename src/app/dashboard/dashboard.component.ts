@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, Injectable, ViewChild } from '@angular/core';
 import { LoginService } from '../login/login.service';
-import { Room, RoomService } from './room.service';
+import { RoomService } from './room.service';
 import { NativeDateAdapter } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
-import { EventService } from './event.service';
+import { EventService, RoomEvent } from './event.service';
+import { ErrorService } from '../error/error.service';
 
 @Injectable()
 export class CustomDateAdapter extends NativeDateAdapter {
@@ -20,17 +21,17 @@ export class CustomDateAdapter extends NativeDateAdapter {
 })
 export class DashboardComponent implements AfterViewInit {
   @ViewChild('leftDatePicker', {static: false}) calendar: MatCalendar<Date>;
-  currentSelectedRoom: Room;
-  currentSelectedDate: Date;
   currentSelectedRange: {start: string, end: string};
   loginDialogOpen = false;
   manageRoomsDialogOpen = false;
-  addBookingDialogOpen = true;
+  addBookingDialogOpen = false;
+  eventEditing: RoomEvent;
 
   constructor(
     public loginService: LoginService,
     public roomService: RoomService,
-    public eventService: EventService
+    public eventService: EventService,
+    public errorService: ErrorService
   ) {
     this.eventService.currentRange$.subscribe(range => {
       this.currentSelectedRange = {
@@ -40,7 +41,6 @@ export class DashboardComponent implements AfterViewInit {
     });
     this.eventService.currentSelectedDate$.subscribe(date => {
       this.calendar && this.calendar._goToDateInView(date, 'month');
-      this.currentSelectedDate = date;
     })
   }
 
@@ -72,6 +72,7 @@ export class DashboardComponent implements AfterViewInit {
 
   closeAddBookingDialog() {
     this.addBookingDialogOpen = false;
+    this.eventEditing = null;
   }
 
   closeLoginDialog() {
@@ -88,5 +89,10 @@ export class DashboardComponent implements AfterViewInit {
 
   openRegisterDialog() {
 
+  }
+
+  editEvent(event: RoomEvent) {
+    this.eventEditing = event;
+    this.openAddBookingDialog();
   }
 }
