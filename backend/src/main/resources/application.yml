@@ -1,0 +1,18 @@
+server:
+  servlet:
+    context-path: /teremfoglalo
+
+spring:
+  profiles:
+    active: development
+  application:
+    name: teremfoglalo-server
+
+  jmx:
+    default-domain: teremfoglalo-server
+  liquibase:
+    change-log: classpath:/migration/liquibase-changelog.xml
+    labels: "!test"
+
+teremfoglalo:
+  application-id: teremfoglalo

@@ -1,0 +1,16 @@
+version: '3'
+
+volumes:
+  teremfoglalo-server-db:
+
+services:
+  dev-db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=teremfoglalo
+      - POSTGRES_USER=terem
+      - POSTGRES_PASSWORD=terem
+    ports:
+      - "5432:5432"
+    volumes:
+      - teremfoglalo-server-db:/var/lib/postgresql

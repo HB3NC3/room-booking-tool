@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/teremfoglalo
+    driver-class-name: org.postgresql.Driver
+    username: terem
+    password: terem
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Workaround: https://github.com/pgjdbc/pgjdbc/issues/1102#issuecomment-398036270
+        jdbc:
+          lob:
+            non_contextual_creation: true
+aut:
+  security:
+    jwt:
+      encryption-key: 25d03f4d4a8f4f6ab61cedad0a88e3548t00b9ra9494007d7m7a06gt25q7p87
+      signing-key: f9e1254b83d2409fa2f8e34ab656db832f4709d4235l4gfk5410f5qe9d760a26
+      internal:
+        accessTokenValidity: 3600
+        refreshTokenLength: 32
+        refreshTokenValidity: 86400
+      external:
+        accessTokenValidity: 3600
+        refreshTokenLength: 32
+        refreshTokenValidity: 86400
